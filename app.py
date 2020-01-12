@@ -359,6 +359,10 @@ html.Div([
 
     html.Br(),
 
+    dcc.Graph(
+        id="image"
+    ),
+
     html.Div([
 
 
