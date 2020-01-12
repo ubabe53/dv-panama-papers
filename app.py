@@ -5,7 +5,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
+import plotly.express as px
 from random import sample, choice
+from skimage import io
+import pathlib
 
 
 ###########################################################################
@@ -214,6 +217,61 @@ countries = [
         {"label": "Slovakia", "value": "SVK"}
         ]
 countries_full_list = ['HKG', 'TWN', 'CHN', 'CHE', 'SGP', 'BRA', 'PAN', 'WSM', 'LIE', 'ESP', 'THA', 'COL', 'JEY', 'AND', 'SYC', 'IRL', 'BEL', 'ISR', 'GIB', 'GGY', 'ARE', 'CYP', 'VEN', 'IMN', 'LBN', 'DNK', 'URY', 'JOR', 'BHS', 'GBR', 'BLZ', 'LUX', 'ECU', 'GTM', 'DEU', 'MUS', 'TUR', 'USA', 'MCO', 'EST', 'NIU', 'CZE', 'NLD', 'HUN', 'CRI', 'PRT', 'CYM', 'ZAF', 'MLT', 'NZL', 'CIV', 'DOM', 'FRA', 'ITA', 'CAN', 'RUS', 'GRC', 'SAU', 'QAT', 'MEX', 'PER', 'BMU', 'SLV', 'AUS', 'KNA', 'ARG', 'JPN', 'AUT', 'ASM', 'PRY', 'CHL', 'EGY', 'SWE', 'VGB', 'POL', 'SVN', 'PHL', 'LCA', 'IDN', 'HND', 'KOR', 'KWT', 'HTI', 'ZWE', 'SDN', 'NIC', 'TCA', 'LVA', 'NGA', 'UKR', 'AIA', 'KEN', 'ROU', 'VCT', 'NOR', 'BOL', 'LTU', 'VNM', 'ABW', 'BGR', 'MYS', 'FIN', 'IRN', 'LSO', 'MOZ', 'MAC', 'GHA', 'GEO', 'YEM', 'ATG', 'CUW', 'IND', 'MKD', 'MAR', 'SEN', 'DMA', 'NAM', 'BWA', 'CUB', 'LBR', 'COK', 'SYR', 'SXM', 'BLR', 'DJI', 'BRB', 'TUN', 'BHR', 'HRV', 'NRU', 'AZE', 'PAK', 'LBY', 'UGA', 'UZB', 'TTO', 'ISL', 'LKA', 'VIR', 'TZA', 'PRI', 'MWI', 'TCD', 'GUM', 'OMN', 'JAM', 'MLI', 'MNE', 'KAZ', 'VUT', 'MDA', 'AGO', 'BGD', 'CAF', 'BRN', 'ALB', 'CMR', 'ZMB', 'SVK']
+
+defaultImg = io.imread("images/power_players.jpg")
+
+img_map = {
+    "AUS": "images/australia.png",
+    "IRQ": "images/iraq.png",
+    "MOR": "images/morocco.png",
+    "YEM": "images/yemen.png",
+    "TUR": "images/turkey.png",
+    "GBR": "images/uk.png",
+    "LBY": "images/liberia.png",
+    "LTU": "images/lithuania.png",
+    "NGA": "images/nigeria.png",
+    "SAU": "images/saudi .png",
+    "ANG": "images/angola.png",
+    "KEN": "images/kenya.png",
+    "VEN": "images/venezuela.png",
+    "AUS": "images/austria.png",
+    "JOR": "images/jordan.png",
+    "RUS": "images/russia.png",
+    "IND": "images/india.png",
+    "CAN": "images/canada.png",
+    "UKR": "images/ukraine.png",
+    "ITA": "images/italy.png",
+    "ARG": "images/argentina.png",
+    "CIV": "images/coteivoire.png",
+    "GHA": "images/ghana.png",
+    "PRT": "images/portugal.png",
+    "PAK": "images/pakistan.png",
+    "GEO": "images/georgia.png",
+    "CHN": "images/china.png",
+    "AZE": "images/azerbaijan.png",
+    "UGA": "images/uganda.png",
+    "SDN": "images/sudan.png",
+    "ISL": "images/iceland.png",
+    "UAE": "images/uae.png",
+    "MON": "images/mongolia.png",
+    "IDN": "images/indonesia.png",
+    "ECU": "images/ecuador.png",
+    "FRA": "images/france.png",
+    "KAZ": "images/kazakhstan.png",
+    "SYR": "images/syria.png",
+    "QAT": "images/qatar.png",
+    "BHR": "images/bermuda.png",
+    "EGY": "images/egypt.png",
+    "MLT": "images/malta.png",
+    "MEX": "images/mexico.png",
+    "ZAM": "images/zambia.png",
+    "BRA": "images/brazil.png",
+    "SPA": "images/spain.png",
+    "JAP": "images/japan.png",
+    "USA": "images/us.png"
+}
+
+
 ###########################################################################
 ####################        App Layout      ###############################
 ###########################################################################
@@ -247,11 +305,13 @@ app.layout = html.Div(children=[
         value=[pp_ts['year'].min(), pp_ts['year'].max()],
         marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
     ),
-
     dcc.Dropdown(
         id="sankey-country",
         options=countries,
-        value=choice(countries_full_list)
+        value="BRA"
+    ),
+    dcc.Graph(
+        id="image"
     ),
     dcc.Graph(
         id="sankey-flow"
@@ -325,6 +385,21 @@ def sankey_flow(selected_country, selected_year):
     return fig
 
 @app.callback(
+    Output("image", "figure"),
+    [Input("sankey-country", "value")]
+)
+def return_images(selected_country):
+    if selected_country in img_map:
+        img = io.imread(img_map[selected_country])
+        fig = px.imshow(img)
+        fig.update_xaxes(showticklabels=False).update_yaxes(showticklabels=False)
+        return fig
+    else:
+        fig = px.imshow(defaultImg)
+        fig.update_xaxes(showticklabels=False).update_yaxes(showticklabels=False)
+        return fig
+
+@app.callback(
     Output("map", "figure"),
     [Input("sankey-country", "value")]
 )
@@ -333,16 +408,16 @@ def map(selected_country):
     selected_country = filt_df["countries"].unique()[0]
     clist = [[selected_country, x] for x in filt_df["jurisdiction_description"]]
     polyline = [i for sl in clist for i in sl]
-    import plotly.express as px
+    
     fig = px.line_geo(filt_df, locations=polyline,
                     locationmode="country names",
                     projection="orthographic")
 
     return fig
 
-###########################################################################
-######################        Exec App      ###############################
-###########################################################################
+##########################################################################
+#####################        Exec App      ###############################
+##########################################################################
 
 if __name__ == '__main__':
     app.run_server(debug=True)
