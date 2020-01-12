@@ -278,55 +278,132 @@ img_map = {
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__)
 
 server = app.server
 
 app.layout = html.Div(children=[
-    html.H1(children="A Visual Exploratory Framework for Tax Havens"),
 
-    html.Div(children='''
-        Visualise the popularity of tax havens during given years.
-    '''),
-    dcc.Dropdown(
-    id="time-series-countries",
-    options=havens,
-    multi=True,
-    value=sample(havens_full_list, 10)
-    ),
-    dcc.Graph(
-        id="time-series-incorporation"
-    ),
-    dcc.RangeSlider(
-        id='year-slider',
-        count=1,
-        min=pp_ts['year'].min(),
-        max=pp_ts['year'].max(),
-        value=[pp_ts['year'].min(), pp_ts['year'].max()],
-        marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
-    ),
-    dcc.Dropdown(
-        id="sankey-country",
-        options=countries,
-        value="BRA"
-    ),
-    dcc.Graph(
-        id="image"
-    ),
-    dcc.Graph(
-        id="sankey-flow"
-    ),
-    dcc.RangeSlider(
-        id='sankey-slider',
-        count=1,
-        min=pp_ts['year'].min(),
-        max=pp_ts['year'].max(),
-        value=[pp_ts['year'].min(), pp_ts['year'].max()],
-        marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
-    ),
-    dcc.Graph(
-        id="map"
-    )
+
+    html.Div([
+        html.H1(children="A Visual Exploratory Framework for Tax Havens")
+    ], className='title'),
+
+html.Div([
+    html.Div([
+
+        html.Div([
+                 html.Div([
+
+                    html.P([
+                            "The Panama Papers expose the internal operations of one of the world’s leading firms in incorporation of offshore entities, Panama-headquartered Mossack Fonseca. The 2.6 terabyte trove of data at the core of this investigation contains nearly 40 years of records, and includes information about more than 210,000 companies in 21 offshore jurisdictions."
+                 ],className='p')
+
+                ]),
+                html.Div([
+
+                    dcc.Dropdown(
+                    id="time-series-countries",
+                    options=havens,
+                    multi=True,
+                    value=sample(havens_full_list, 10)
+                    )
+
+                ],className='dropdown_1')
+
+        ], className='column1_row1'),
+
+        html.Div([
+
+        dcc.Graph(
+            id="time-series-incorporation"
+        ),
+
+        ],className='column2_row1')
+
+    ],className='row'),
+
+    html.Br(),
+
+    html.Div([
+        dcc.RangeSlider(
+                    id='year-slider',
+                    count=1,
+                    min=pp_ts['year'].min(),
+                    max=pp_ts['year'].max(),
+                    value=[pp_ts['year'].min(), pp_ts['year'].max()],
+                    marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},step=1
+                ),
+
+    ], className='slider'),
+
+    html.Br(),
+
+    html.Div([
+                html.P([
+                    "Explore a country"
+                    ], className= 'explore_a_country'
+                ),
+
+                html.Div([
+
+                    dcc.Dropdown(
+                        id="sankey-country",
+                        options=countries,
+                        value=choice(countries_full_list)
+                    ),
+
+                ], className='dropdown_2'),
+
+            ],className='second_dropdown'),
+
+    html.Br(),
+
+    html.Div([
+
+
+        html.Div([
+
+
+            dcc.Graph(
+                id="sankey-flow"
+            ),
+
+        ],className='column1_row2'),
+
+        html.Br(),
+
+        html.Div([
+
+            dcc.Graph(
+                id="map"
+            )
+        ], className='column2_row2')
+
+    ],className='row'),
+
+    html.Br(),
+
+    html.Div([
+        dcc.RangeSlider(
+                        id='sankey-slider',
+                        count=1,
+                        min=pp_ts['year'].min(),
+                        max=pp_ts['year'].max(),
+                        value=[pp_ts['year'].min(), pp_ts['year'].max()],
+                        marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
+                    )
+
+    ], className='slider'),
+
+],className='container'),
+
+    html.Footer([
+            html.Label(["Made by Dave Montali M20190201 Matteo Fiorani M20190746 Umberto Tammaro M20190806"
+                        ])
+        ],
+            className="footer"
+        ),
 
 ])
 
