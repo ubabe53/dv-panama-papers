@@ -30,7 +30,7 @@ pp.dropna(inplace=True)
 pp_ts = pp.groupby(["year","jurisdiction"]).count()["node_id"].unstack()
 pp_ts.reset_index(inplace=True)
 
-havens = [        
+havens = [
         {"label": "Samoa", "value": "SAM"},
         {"label": "Panama", "value": "PMA"},
         {"label": "Nevada", "value": "NEV"},
@@ -271,12 +271,9 @@ img_map = {
     "USA": "images/us.png"
 }
 
-
 ###########################################################################
 ####################        App Layout      ###############################
 ###########################################################################
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__)
 
@@ -284,96 +281,174 @@ server = app.server
 
 app.layout = html.Div(children=[
 
+html.Div([
+        html.H1(children="The Panama Papers")
+], className='title'),
+html.Div([
+        html.P(children="A Visual Exploratory Framework for Tax Havens")
+], className='subtitle'),
 
-    html.Div([
-        html.H1(children="A Visual Exploratory Framework for Tax Havens")
-    ], className='title'),
+html.Br(),
 
 html.Div([
+
+    html.P([
+
+    ], className='separator'),
+
     html.Div([
 
         html.Div([
-                 html.Div([
 
-                    html.P([
-                            "The Panama Papers expose the internal operations of one of the world’s leading firms in incorporation of offshore entities, Panama-headquartered Mossack Fonseca. The 2.6 terabyte trove of data at the core of this investigation contains nearly 40 years of records, and includes information about more than 210,000 companies in 21 offshore jurisdictions."
-                 ],className='p')
-
-                ]),
                 html.Div([
 
-                    dcc.Dropdown(
-                    id="time-series-countries",
-                    options=havens,
-                    multi=True,
-                    value=sample(havens_full_list, 10)
-                    )
 
-                ],className='dropdown_1')
+                            html.Div([
+
+                                html.Div([
+
+                                ], className="box"),
+
+                                html.P([ "Explore the Panana Papers figures"
+
+                                ],className="P"),
+
+                            ]),
+
+
+
+                    html.Div([
+                        html.P([
+                                "The Panama Papers expose the internal operations of one of the world’s leading firms in incorporation of offshore entities, Panama-headquartered Mossack Fonseca. The 2.6 terabyte trove of data at the core of this investigation contains nearly 40 years of records, and includes information about more than 210,000 companies in 21 offshore jurisdictions."
+                     ],className='p'),
+
+                    ]),
+
+                    html.P(['select tax haven:'], className="label"),
+
+                    html.Div([
+
+                        dcc.Dropdown(
+                        id="time-series-countries",
+                        options=havens,
+                        multi=True,
+                        value=sample(havens_full_list, 10)
+                        )
+
+                    ],className='dropdown_1')
+
+                ],className='top_left')
 
         ], className='column1_row1'),
 
         html.Div([
 
-        dcc.Graph(
-            id="time-series-incorporation"
-        ),
+            html.Div([
 
-        ],className='column2_row1')
+                dcc.Graph(
+                    id="time-series-incorporation"
+                ),
+
+                html.Div([
+                        dcc.RangeSlider(
+                                    id='year-slider',
+                                    count=5,
+                                    min=pp_ts['year'].min(),
+                                    max=pp_ts['year'].max(),
+                                    value=[pp_ts['year'].min(), pp_ts['year'].max()],
+                                    marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},step=1,
+                                    allowCross= False
+                                ),
+
+                    ], className='slider'),
+
+            ],className='topright')
+
+        ],className='column2_row2')
+
+    ],className='row'),
+
+    html.P([
+
+    ], className='separator'),
+
+    html.Div([
+
+                html.Div([
+
+                    html.Div([
+
+                        html.Div([
+
+                        ], className="box"),
+
+                        html.P(["On the hunt for tax evaders"
+
+                                ], className="P"),
+
+                    ]),
+
+                    html.Div([
+                        html.P([
+                            "In the papers were revealed names of very powerful people and world leaders"
+                        ], className='p'),
+
+                    ]),
+
+                    html.P(['select country:'],className="label"),
+
+                    html.Div([
+                            dcc.Dropdown(
+                                    id="sankey-country",
+                                    options=countries,
+                                    value=choice(countries_full_list))
+                        ],className="dropdown_2")
+
+
+
+
+                ],className="column1_row2"),
+
+                html.Div([
+
+                    dcc.Graph(
+                        id="sankey-flow"
+                    ),
+
+
+                    html.Div([
+                            dcc.RangeSlider(
+                                            id='sankey-slider',
+                                            count=1,
+                                            min=pp_ts['year'].min(),
+                                            max=pp_ts['year'].max(),
+                                            value=[pp_ts['year'].min(), pp_ts['year'].max()],
+                                            marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
+                                        )
+
+                        ], className='slider'),
+
+                ],className='column2_row2')
+
+
 
     ],className='row'),
 
     html.Br(),
 
-    html.Div([
-        dcc.RangeSlider(
-                    id='year-slider',
-                    count=1,
-                    min=pp_ts['year'].min(),
-                    max=pp_ts['year'].max(),
-                    value=[pp_ts['year'].min(), pp_ts['year'].max()],
-                    marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},step=1
-                ),
+    html.P([
 
-    ], className='slider'),
-
-    html.Br(),
+                ], className='separator'),
 
     html.Div([
-                html.P([
-                    "Explore a country"
-                    ], className= 'explore_a_country'
-                ),
-
-                html.Div([
-
-                    dcc.Dropdown(
-                        id="sankey-country",
-                        options=countries,
-                        value=choice(countries_full_list)
-                    ),
-
-                ], className='dropdown_2'),
-
-            ],className='second_dropdown'),
-
-    html.Br(),
-
-    dcc.Graph(
-        id="image"
-    ),
-
-    html.Div([
-
 
         html.Div([
 
-
             dcc.Graph(
-                id="sankey-flow"
+                id="image"
             ),
 
-        ],className='column1_row2'),
+        ],className='column1_row3'),
 
         html.Br(),
 
@@ -382,32 +457,22 @@ html.Div([
             dcc.Graph(
                 id="map"
             )
-        ], className='column2_row2')
+        ], className='column2_row3')
 
     ],className='row'),
 
     html.Br(),
 
-    html.Div([
-        dcc.RangeSlider(
-                        id='sankey-slider',
-                        count=1,
-                        min=pp_ts['year'].min(),
-                        max=pp_ts['year'].max(),
-                        value=[pp_ts['year'].min(), pp_ts['year'].max()],
-                        marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
-                    )
+html.P([
 
-    ], className='slider'),
+        ], className='separator'),
 
 ],className='container'),
 
-    html.Footer([
-            html.Label(["Made by Dave Montali M20190201 Matteo Fiorani M20190746 Umberto Tammaro M20190806"
-                        ])
-        ],
-            className="footer"
-        ),
+
+html.Footer([
+            "Made by Dave Montali M20190201 Matteo Fiorani M20190746 Umberto Tammaro M20190806"
+        ], className="footer"),
 
 ])
 
