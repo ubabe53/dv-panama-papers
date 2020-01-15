@@ -1,6 +1,6 @@
 import os
 import dash
-import dash_core_components as dcc 
+import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
@@ -16,6 +16,7 @@ import pathlib
 ###########################################################################
 
 pp = pd.read_csv('csv_panama_papers/panama_papers.nodes.entity.csv')
+
 
 pp["incorporation_date"] = pd.to_datetime(pp["incorporation_date"])
 pp['year'], pp['month'] = pp['incorporation_date'].dt.year, pp['incorporation_date'].dt.month
@@ -153,7 +154,7 @@ countries = [
         {"label": "Norway", "value": "NOR"},
         {"label": "Bolivia", "value": "BOL"},
         {"label": "Lithuania", "value": "LTU"},
-        {"label": "Viet Nam", "value": "VNM"},
+        {"label": "Vietnam", "value": "VNM"},
         {"label": "Aruba", "value": "ABW"},
         {"label": "Bulgaria", "value": "BGR"},
         {"label": "Malaysia", "value": "MYS"},
@@ -217,7 +218,7 @@ countries = [
         {"label": "Slovakia", "value": "SVK"}
         ]
 countries_full_list = ['HKG', 'TWN', 'CHN', 'CHE', 'SGP', 'BRA', 'PAN', 'WSM', 'LIE', 'ESP', 'THA', 'COL', 'JEY', 'AND', 'SYC', 'IRL', 'BEL', 'ISR', 'GIB', 'GGY', 'ARE', 'CYP', 'VEN', 'IMN', 'LBN', 'DNK', 'URY', 'JOR', 'BHS', 'GBR', 'BLZ', 'LUX', 'ECU', 'GTM', 'DEU', 'MUS', 'TUR', 'USA', 'MCO', 'EST', 'NIU', 'CZE', 'NLD', 'HUN', 'CRI', 'PRT', 'CYM', 'ZAF', 'MLT', 'NZL', 'CIV', 'DOM', 'FRA', 'ITA', 'CAN', 'RUS', 'GRC', 'SAU', 'QAT', 'MEX', 'PER', 'BMU', 'SLV', 'AUS', 'KNA', 'ARG', 'JPN', 'AUT', 'ASM', 'PRY', 'CHL', 'EGY', 'SWE', 'VGB', 'POL', 'SVN', 'PHL', 'LCA', 'IDN', 'HND', 'KOR', 'KWT', 'HTI', 'ZWE', 'SDN', 'NIC', 'TCA', 'LVA', 'NGA', 'UKR', 'AIA', 'KEN', 'ROU', 'VCT', 'NOR', 'BOL', 'LTU', 'VNM', 'ABW', 'BGR', 'MYS', 'FIN', 'IRN', 'LSO', 'MOZ', 'MAC', 'GHA', 'GEO', 'YEM', 'ATG', 'CUW', 'IND', 'MKD', 'MAR', 'SEN', 'DMA', 'NAM', 'BWA', 'CUB', 'LBR', 'COK', 'SYR', 'SXM', 'BLR', 'DJI', 'BRB', 'TUN', 'BHR', 'HRV', 'NRU', 'AZE', 'PAK', 'LBY', 'UGA', 'UZB', 'TTO', 'ISL', 'LKA', 'VIR', 'TZA', 'PRI', 'MWI', 'TCD', 'GUM', 'OMN', 'JAM', 'MLI', 'MNE', 'KAZ', 'VUT', 'MDA', 'AGO', 'BGD', 'CAF', 'BRN', 'ALB', 'CMR', 'ZMB', 'SVK']
-
+countries_full_list= countries_full_list.sort()
 defaultImg = io.imread("images/power_players.jpg")
 
 img_map = {
@@ -332,7 +333,7 @@ html.Div([
                         id="time-series-countries",
                         options=havens,
                         multi=True,
-                        value=sample(havens_full_list, 10)
+                        value=["ANG","SAM","PMA"]
                         )
 
                     ],className='dropdown_1')
@@ -356,7 +357,8 @@ html.Div([
                                     min=pp_ts['year'].min(),
                                     max=pp_ts['year'].max(),
                                     value=[pp_ts['year'].min(), pp_ts['year'].max()],
-                                    marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},step=1,
+                                    marks={str(i): '{}'.format(str(i)) for i in [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015]},
+                                    step=1,
                                     allowCross= False
                                 ),
 
@@ -390,7 +392,7 @@ html.Div([
 
                     html.Div([
                         html.P([
-                            "In the papers were revealed names of very powerful people and world leaders"
+                            "The data not only revealed the popularity of tax haven per country but even mentioned the key figures involved in the tax evasion."
                         ], className='p'),
 
                     ]),
@@ -401,7 +403,7 @@ html.Div([
                             dcc.Dropdown(
                                     id="sankey-country",
                                     options=countries,
-                                    value=choice(countries_full_list))
+                                    value="PRT")
                         ],className="dropdown_2")
 
 
@@ -423,7 +425,8 @@ html.Div([
                                             min=pp_ts['year'].min(),
                                             max=pp_ts['year'].max(),
                                             value=[pp_ts['year'].min(), pp_ts['year'].max()],
-                                            marks={i: '{}'.format(i) for i in range(int(pp_ts['year'].min()), int(pp_ts['year'].max()))},        step=1
+                                            marks={str(i): '{}'.format(str(i)) for i in [1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015]},
+                                            step=1
                                         )
 
                         ], className='slider'),
@@ -436,9 +439,6 @@ html.Div([
 
     html.Br(),
 
-    html.P([
-
-                ], className='separator'),
 
     html.Div([
 
@@ -487,6 +487,13 @@ html.Footer([
     Input('year-slider', "value")]
 )
 def time_series(selected_havens, selected_year):
+
+    layout= {'title':'Number of Offshore Entities per Tax Haven',
+             'font':{'size': 10} ,
+               'yaxis': {'title':'Offshore Entities'},
+             'hovermode':'closest'
+             }
+
     filt_df = pp_ts[pp_ts["year"] > selected_year[0]]
     filt_df = filt_df[filt_df["year"] <= selected_year[1]]
     traces = []
@@ -494,12 +501,12 @@ def time_series(selected_havens, selected_year):
         traces.append(dict(
             x=filt_df.year,
             y=filt_df[c],
-            text=c,
-            name=c
+            name=pp.loc[pp['jurisdiction'] == c, 'jurisdiction_description'].drop_duplicates().values[0],
         ))
-    
+
     return {
-        "data": traces
+        "data": traces,
+        "layout": layout,
     }
 
 @app.callback(
@@ -509,21 +516,22 @@ def time_series(selected_havens, selected_year):
 )
 def sankey_flow(selected_country, selected_year):
     filt_df = pp[pp["country_codes"] == selected_country]
+    country=  filt_df["countries"].unique()
     filt_df = filt_df[filt_df["year"] > selected_year[0]]
     filt_df = filt_df[filt_df["year"] <= selected_year[1]]
-    haven_list = list(filt_df["jurisdiction"].unique())
+    haven_list = list(filt_df["jurisdiction_description"].unique())
     fig = go.Figure(data=[go.Sankey(
     node = dict(
       pad = 15,
       thickness = 20,
       line = dict(color = "black", width = 0.5),
-      label = [selected_country] + haven_list,
+      label = [country] + haven_list,
       color = "blue",
     ),
     link = dict(
       source = [0] * len(haven_list),
       target = [x for x in range(1, len(haven_list)+1)],
-      value = [filt_df[filt_df["jurisdiction"] == x].count()[0] for x in haven_list]
+      value = [filt_df[filt_df["jurisdiction_description"] == x].count()[0] for x in haven_list]
     ))])
 
     fig.update_layout(title_text="Tax Haven Popularity by Country", font_size=10)
@@ -539,11 +547,26 @@ def return_images(selected_country):
         img = io.imread(img_map[selected_country])
         fig = px.imshow(img)
         fig.update_xaxes(showticklabels=False).update_yaxes(showticklabels=False)
-        return fig
+        fig.update_layout(
+            title_text='Key Figures of selected Country',
+            font_size=10,
+            hovermode=False,
+        )
+
     else:
         fig = px.imshow(defaultImg)
         fig.update_xaxes(showticklabels=False).update_yaxes(showticklabels=False)
-        return fig
+
+
+        fig.update_layout(
+            title_text='Key Figures of selected Country',
+            xaxis= {"title":"For the selected country there is no Key Figure worth of mentioning"},
+            font_size=10,
+            hovermode=False,
+        )
+
+
+    return fig
 
 @app.callback(
     Output("map", "figure"),
@@ -557,7 +580,19 @@ def map(selected_country):
     
     fig = px.line_geo(filt_df, locations=polyline,
                     locationmode="country names",
-                    projection="orthographic")
+                    projection="winkel tripel")
+
+    fig.update_layout(
+        title_text='Connecting the dots',
+        font_size=10,
+        showlegend=False,
+        geo=go.layout.Geo(
+            scope='world',
+            projection_type='winkel tripel',
+            showland=True,
+            landcolor='rgb(242, 242, 242)',
+            showcountries=True,
+        ), )
 
     return fig
 
@@ -567,3 +602,5 @@ def map(selected_country):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+
