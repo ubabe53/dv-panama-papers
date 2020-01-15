@@ -55,6 +55,9 @@ havens = [
         {"label": "Costa Rica", "value": "CRI"}
         ]
 havens_full_list = ['SAM', 'PMA', 'NEV', 'UK', 'SGP', 'RAK', 'IOM', 'ANG', 'SEY', 'NIUE', 'UY', 'BVI', 'HK', 'NZL', 'BAH', 'CYP', 'MLT', 'BLZ', 'JSY', 'WYO', 'CRI']
+havens = sorted(havens, key=lambda x: x.get("label", ""))
+havens_full_list = sorted(havens_full_list)
+
 countries = [
         {"label": "Hong Kong", "value": "HKG"},
         {"label": "Taiwan", "value": "TWN"},
@@ -217,8 +220,13 @@ countries = [
         {"label": "Zambia", "value": "ZMB"},
         {"label": "Slovakia", "value": "SVK"}
         ]
+
+countries = sorted(countries, key=lambda x: x.get("label"))
+del countries[-1]
+
 countries_full_list = ['HKG', 'TWN', 'CHN', 'CHE', 'SGP', 'BRA', 'PAN', 'WSM', 'LIE', 'ESP', 'THA', 'COL', 'JEY', 'AND', 'SYC', 'IRL', 'BEL', 'ISR', 'GIB', 'GGY', 'ARE', 'CYP', 'VEN', 'IMN', 'LBN', 'DNK', 'URY', 'JOR', 'BHS', 'GBR', 'BLZ', 'LUX', 'ECU', 'GTM', 'DEU', 'MUS', 'TUR', 'USA', 'MCO', 'EST', 'NIU', 'CZE', 'NLD', 'HUN', 'CRI', 'PRT', 'CYM', 'ZAF', 'MLT', 'NZL', 'CIV', 'DOM', 'FRA', 'ITA', 'CAN', 'RUS', 'GRC', 'SAU', 'QAT', 'MEX', 'PER', 'BMU', 'SLV', 'AUS', 'KNA', 'ARG', 'JPN', 'AUT', 'ASM', 'PRY', 'CHL', 'EGY', 'SWE', 'VGB', 'POL', 'SVN', 'PHL', 'LCA', 'IDN', 'HND', 'KOR', 'KWT', 'HTI', 'ZWE', 'SDN', 'NIC', 'TCA', 'LVA', 'NGA', 'UKR', 'AIA', 'KEN', 'ROU', 'VCT', 'NOR', 'BOL', 'LTU', 'VNM', 'ABW', 'BGR', 'MYS', 'FIN', 'IRN', 'LSO', 'MOZ', 'MAC', 'GHA', 'GEO', 'YEM', 'ATG', 'CUW', 'IND', 'MKD', 'MAR', 'SEN', 'DMA', 'NAM', 'BWA', 'CUB', 'LBR', 'COK', 'SYR', 'SXM', 'BLR', 'DJI', 'BRB', 'TUN', 'BHR', 'HRV', 'NRU', 'AZE', 'PAK', 'LBY', 'UGA', 'UZB', 'TTO', 'ISL', 'LKA', 'VIR', 'TZA', 'PRI', 'MWI', 'TCD', 'GUM', 'OMN', 'JAM', 'MLI', 'MNE', 'KAZ', 'VUT', 'MDA', 'AGO', 'BGD', 'CAF', 'BRN', 'ALB', 'CMR', 'ZMB', 'SVK']
-countries_full_list= countries_full_list.sort()
+countries_full_list = sorted(countries_full_list)
+
 defaultImg = io.imread("images/power_players.jpg")
 
 img_map = {
@@ -560,7 +568,7 @@ def return_images(selected_country):
 
         fig.update_layout(
             title_text='Key Figures of selected Country',
-            xaxis= {"title":"For the selected country there is no Key Figure worth of mentioning"},
+            xaxis= {"title":"For the selected country there are no Key Figures worth mentioning"},
             font_size=10,
             hovermode=False,
         )
@@ -580,7 +588,7 @@ def map(selected_country):
     
     fig = px.line_geo(filt_df, locations=polyline,
                     locationmode="country names",
-                    projection="winkel tripel")
+                    )
 
     fig.update_layout(
         title_text='Connecting the dots',
@@ -588,7 +596,7 @@ def map(selected_country):
         showlegend=False,
         geo=go.layout.Geo(
             scope='world',
-            projection_type='winkel tripel',
+            projection_type='orthographic',
             showland=True,
             landcolor='rgb(242, 242, 242)',
             showcountries=True,
