@@ -478,7 +478,7 @@ app.layout = html.Div(children=[
 
 
     html.Footer([
-        "Made by Dave Montali M20190201 Matteo Fiorani M20190746 Umberto Tammaro M20190806"
+        "Made by Umberto Tammaro|Dave Montali|Matteo Fiorani"
     ], className="footer"),
 
 ])
